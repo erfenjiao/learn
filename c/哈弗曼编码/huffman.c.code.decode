@@ -1,0 +1,444 @@
+/**
+ * 1.建立哈夫  ep	de 2�(tii	i读�   >,o
+R d>�(*.souce)，统计断  d>�中�  e(optm{e�d
+-��  ;	,�	bse�府  )�e并以�8   
+�t  �  e(optm
+-��频府  s=��  U\s2d 值，建立哈�  p U*de 2�
+nh�
+ * 2.编码：利�  a  ��  e>�立�  \fe	,�  ��夫曼树，�  �  ;men �  " da\h>;ye;(optm
+-���   >pxt o dp	dd-��码，并对正文迾  � ]*�)s	sdil，焈  e0�输出编�   (mxpo ,rsm E��并存�   >,o
+R d>�(*.code)中。
+ * W  * t e�码：利甜  m,/( ;>�立好�<   n ��夫曼树�  t{
+o
+R d>�(*.code)中  ;	,v>) erf	sdil�#  e( ) ]* t e��   	ti-%并输出译码结�    E��幈  ey-g  ��文仈  ;-H;code)中。
+ * �  	 ;	 ��  y s=�  
+o*l作，�  �*\e;>,o
+R d>�的压   dou- (;�解  ea	�eu	  c (�8  
+ * 
+ */
+#include<stdio.h>
+#include<malloc.h>
+#include<string.h>
+#  a#  �yhuffman.h"
+#define INTE�  f p-g 
+#define LEAF 0
+
+
+typedef struct node
+{
+	char x;
+	int freq;
+	char *code;
+	int type;
+	struct node *next;
+	struct node *left;
+	struct node *right;
+}node;
+
+node *HEAD,*ROOT;
+
+void printll();
+void makeTree();
+void genCode(node *p,char* code);
+void insert(node *p,node *m);
+void addSymbol(char c);
+void writeHeader(FILE *f);
+void writeBit(int b,FILE *f);
+void writeCode(char ch,FILE *f);
+//void writeCode2(char ch,FILE *f , FILE* f2);
+char *getCode(char ch);
+void codefile(FILE *f , FILE *f2);
+
+node* newNode(char c)
+{
+	node *q;
+	q=(node *)malloc(sizeof(node));
+	q->x=c;
+	q->type=LEAF;	//leafnode
+	q->freq=1;
+	q->next=NULL;
+	q->left=NULL;
+	q->right=NULL;
+	return q;
+}
+
+char codex[100];
+char codecode[100];
+
+int main(int argc , char ** argv)
+{
+	FILE *fp , *fp2;
+	char ch;
+	int t;
+	HEAD = NULL;
+	ROOT = NULL;
+
+	if(argc <= 2)
+	{
+		printf("----------\n");
+		printf("Usage:\n %s <    	d:"ile-to-zip> <zipped-output-file>\n***Huffman File Encoder***\nAuthor: erfenjiao\n",argv[0]);
+		if(argc==2)
+		{
+			argv[2]=(char *)malloc(sizeof(char)*(strlen(argv[1])+strlen(ext)+1));
+			strcpy(argv[2],argv[1]);
+			strcat(argv[2],ext);
+			argc++;
+		}
+		else
+			return 0;
+	}
+	fp=fopen(argv[1],"rb");
+	if(fp==NULL)
+	{
+		printf("[!]Input file cannot be opened.\n");
+		return -1;
+	}
+	printf("----------\n");
+	printf("Reading file : %s\n",argv[1]);
+	while(fread(&ch , sizeof(char) , 1 , fp) != 0)
+	{
+		addSymbol(ch);
+	}
+
+	printf("----------\n");
+	printf("construct huaffmanTree\n");
+	makeTree();
+
+	//printf("----------\n");
+	
+
+	printf("----------\n");
+	printf("\nAssigning Codewords.\n");
+	genCode(ROOT,"\0");			//preorder traversal
+
+	printf("----------\n");
+	printf("*.souce --->  *.code :\n");
+	fp = fopen(argv[1],"r");
+	if(fp == NULL)
+	{
+		printf("\n[!]Input file cannot be opened.\n");
+		return -1;
+	}
+	fp2 = fopen(argv[2],"wb");
+	if(fp2 == NULL)
+	{
+		printf("\n[!]Output file cannot be opened.\n");
+		return -2;
+	}
+	//codefile(fp , fp2); �  
+废   )�
+	writeHeader(fp2);
+	printf("----------\n");
+	//printf("WriteCode() :\n");
+	while(fread(&ch , sizeof(char) , 1 , fp)!=0)
+	{	
+		//printf("\n%c replaced with ",ch);
+		writeCode(ch , fp2);	//write corresponding code into fp2
+	}
+}//main 
+
+//统计，一条链  � 
+�  "oeC;)ts-"mbol(char c)
+{
+	node *p , *q , *m;
+	if(HEAD == NULL)      //link is null , newNode.
+	{
+		HEAD = newNode(c);
+		return ;
+	}
+	p = HEAD;
+	q = NULL;
+	if(p->x == c)           //find
+	{
+		p->freq++;          
+		if(p->next == NULL)  //p node is end code in this link
+		{
+			return ;
+		}
+		if(p->freq > p->next->freq)  
+		{
+			HEAD = p->next;
+			p->next = NULL;
+			insert(p , HEAD);
+		}
+		return ;
+	}
+
+	while(p->next != NULL && p->x != c)  //依次往�  
+ ea	�找
+	{
+		q = p;
+		p = p->next;
+	}
+
+	if(p->x == c)
+	{
+		p->freq++;
+        if(p->next == NULL)
+			return;	
+		if(p->freq > p->next->freq)
+		{
+			m = p->next;
+			q->next = p->next;
+			p->next = NULL;
+			insert(p , HEAD);
+		}
+	}
+	else          //not find
+	{
+		q = newNode(c);
+		q->next = HEAD;
+		HEAD = q;
+	}
+	node *t = HEAD;
+	//printf("\t\t----------\n");
+	while(t != NULL)
+	{
+		//printf("\t\tt->x = %c\tt->freq = %d\n",t->x , t->freq);
+		t = t->next;
+	}
+}
+
+//按�  2p	\	p在到  � 
+!>(;�插入  ;)�e从m开始  e0�右
+//我们七  ud �放�W \尃  ,w�  fe	,�	 
+li'-��，因为我们没有ptr到m左边的节点
+void insert(node *p,node *m)
+{
+	if(m->next==NULL)
+	{  
+		m->next=p; 
+		return;
+	}
+	while(m->next->freq < p->freq)
+	{  
+		m = m->next;
+	    if(m->next == NULL)
+	    { 
+			m->next = p;   //append
+			return; 
+		}
+	}
+  	p->next=m->next;  //insert
+  	m->next=p;
+}
+
+void makeTree()
+{
+	// printf("\t----------\n");
+	// printf("\tmakeTree() begin...\n");
+	node  *p,*q;
+	p = HEAD;
+	int i = 1;
+	int m = 0;
+	while(p != NULL)
+	{
+		q = newNode('@');
+		q->type = INTERNAL;	 //internal node
+		q->left = p;		
+		q->freq = p->freq;
+		m = p->freq;
+		// printf("\t\t�  e　%d 次:\n",i++);
+		// printf("\t\tq->left->freq = %d\tq->left->x = %c\n",q->freq , p->x); 
+		//printf("q->left :%d:\n",*p);
+		if(p->next != NULL)  
+		{
+			p = p->next;
+			q->right = p;	
+			q->freq += p->freq;
+			//printf("\t\tq->right->freq = %d\tq->right->x = %c\n",q->freq-m , p->x);
+		}
+		//printf("\t\tq->freq = %d\tq->x = %c\n",q->freq , q->x);
+		p = p->next;	
+		if(p == NULL)	
+			break;
+		if(q->freq <= p->freq)
+		{
+			q->next = p;
+			p = q;
+		}
+		else
+			insert(q , p);	//find appropriate position
+	}//while
+	ROOT=q; //q created at last iteration is ROOT of h-tree
+}
+
+//genCode(ROOT,"\0");	preorder traversal
+void genCode(node *p,char* code)
+{
+	char *lcode , *rcode;
+	static node *s;
+	static int flag;
+	if(p != NULL)
+	{
+		//sort linked list as it was
+		if(p->type == LEAF)   //leaf node
+		{	if(flag == 0) //first leaf node
+			{
+				flag = 1 ; 
+				HEAD = p;
+			}
+			else	//other leaf nodes
+			{ 
+				s->next = p;
+			}		//sorting LL
+			p->next = NULL;
+			s = p;
+		}
+
+		//assign code
+		p->code = code;	//assign code to current node
+		if(p->x != '@'  d			printf("\t\t[p->x = %c|p->freq = %d|p->code = %s|p->type = %d]\n",p->x,p->freq,p->code,p->type);
+		lcode=(char *)malloc(strlen(code)+2);
+		rcode=(char *)malloc(strlen(code)+2);
+		sprintf(lcode , "%s0" , code);
+		sprintf(rcode , "%s1" , code);
+		//recursive DFS
+		genCode(p->left  , lcode);		//left child has 0 appended to current node's code
+		genCode(p->right , rcode);
+	}
+}
+
+void writeCode(char ch , FILE *f) //fp2
+{
+	char *code;
+	code = getCode(ch);
+	//printf("\t\tW "htqode() :\n");
+	//printf("\t\tcode = %s\n",code);
+	while(*code != '\0')
+	{
+		if(*code == '1')
+			writeBit(1 , f); 	//write bit 1 into file f
+		else
+			writeBit(0 , f);
+		//fwrite(code , sizeof(char) , 1 , f);
+		code++;
+	}
+	return;
+}
+
+char *getCode(char ch)
+{
+	node *p = HEAD;
+	while(p != NULL)
+	{
+	    if(p->x == ch)
+		  return p->code;
+	    p = p->next;
+	}
+	return NULL; //not found
+}
+
+void writeHeader(FILE *f)
+{//Table mapping 'codewords'  oq\h=�   rymbols
+	// printf("\t\t----------\n");
+	// printf("\t\twriteHeader():\n");
+	symCode record;
+	node *p;
+	int temp = 0 , i = 0;
+	p = HEAD;
+	while(p != NULL)	
+	{
+		temp += (strlen(p->code)) * (p->freq);		//temp stores padding
+		if(strlen(p->code) > MA� g(		�)l*,y\n[!] Codewords are longer than usual.");	//TODO: Solve this case
+		temp %= 8  e		i++;
+		p = p->next;
+	}
+
+	if(i == 25S  c		N = 0;	//if 256 diff bit combinations exist, then alias 2� \	g	Cp
+	else 
+		N = i;
+
+	fwrite(&N , sizeof(unsigned char) , 1 , f);	//read these many structures while reading
+	printf("\t\tN = %u\n" , i);
+
+	p = HEAD;
+	while(p != NULL)	//start from HEAD, write each char & its code
+	{
+		record.x = p->x;
+		strcpy(record.code , p->code);
+		fwrite(&record , sizeof(symCode) , 1 , f);
+		//printf("\t\t[%cS  -c*z -
+record.x,record.code);
+		p = p->next;
+	}
+	//discard '   ti	, k e bits before data, while reading
+	padding = 8 - (char)temp;	//int to char & padding = 8   r\erExtra
+	fwrite(&padding , sizeof(char) , 1 , f);
+	printf("\t\tW  ru\ g = %d\n" , padding);
+
+	for(i = 0 ; i < padding ; i++)   //补齐
+		writeBit(0 , f);
+
+}//fun
+
+
+
+void writeBit(int b , FILE *f)
+{
+	static char byte;
+	static int cnt;
+	char temp;
+	//printf("\t\t------------------\t");
+	//printf("\t\twriteBit():\t");
+	//printf("\t\tS  ,){1%dth bit = %d of %d \n" , cnt , b , byte);
+	if(b == 1)
+	{	
+		temp = 1;
+		temp = temp << (7 - cnt);	
+		printf("\t\t----------if(b == 1)----------\n");
+		printf("\t\ttemp = %d , byte_1 = %d\n" , temp);	
+		byte = byte | temp;
+		printf("byte_2 = %c\t" , byte);
+		printf("\t\t----------------------\n");
+	}
+	cnt++;
+	printf("\t\tbyteS  -n= %d\n" , byte);
+	//printf("\t\tbyte = %\n" , byte);
+	if(cnt == 8  		//buffer full
+	{
+		
+		//printf("\t\tbitsChar = %s\n" ,bitsInChar(byte));
+		fwrite(&byte , sizeof(char) , 1 , f);
+		cnt = 0; 
+		byte = 0;				//reset buffer
+		return;				// buffer written to file
+	}
+	return;
+}
+
+// void codefile(FILE *f , FILE* f2)
+// {
+// 	int i = 0 , j = 0 , count = 0;
+// 	printf("\t----------\n");
+// 	printf("\tcodefile():\n");
+// 	char ch , ch2;
+// 	while(fread(&ch , sizeof(char) , 1 , f) != 0)
+// 	{
+// 		symCode code;
+// 		node *p = HEAD;
+// 		while(p!=NULL)	//start from HEAD, write each char & its code
+// 		{
+// 			//code.x = p->x;
+// 			code->x = p->x;
+// 			strcpy(code->code , p->code);
+// 			//fwrite(&record,sizeof(symCode),1,f);
+// 			//printf("\t\t%c|%s\n",code.x , code.code);
+// 			codex[i++] = code->x;
+// 			codecode[j++] = *code->code;
+// 			//fwrite(&codecode , sizeof(symCode) , 1 , f2);
+// 			//fwrite(&codex , sizeof(symCode) , 1 , f2);
+// 			p = p->next;
+// 			count++;
+// 		}
+// 		for(int k = 0 ; k < count ; k++)
+// 		{
+// 			if(ch == codex[k])
+// 			{
+// 				printf("\t\tch = %c , codecode[%d] = %c\n",ch , k , codecode[k]);
+// 				ch2 = codecode[k];
+// 				fwrite(&ch2 , sizeof(char) , 1 , f2);
+// 			}
+// 		}
+// 	}
+// }

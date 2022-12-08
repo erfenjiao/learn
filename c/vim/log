@@ -1,0 +1,100 @@
+#define SIZE 
+char buf[SIZE];
+fgets(buf,SIZE,stream);
+
+
+fgets(* ,size , stream ); 
+有可能有两种可能造成这个函数的正常结束
+一、读到了 size-1 个有效字节
+二、读到了 \n 
+
+
+abcd
+1 ->a b c d '\0'
+2 ->'\n' '\0'      //这个文件需读两次，不能忽略 ‘\n'
+
+
+情景一 -> 数据量足够，超过十个字节
+
+RETURN VALUE
+       On  success,  fread() and fwrite() return the number of items read or written.  This number equals the number of bytes transferred only when size is
+       1.  If an error occurs, or the end of the file is reached, the return value is a short item count (or zero).
+
+       fread() does not distinguish between end-of-file and error, and callers must use feof(3) and ferror(3) to determine which occurred.
+
+
+
+×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
+×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
+×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
+
+
+
+fread(buf,size,nmemb,fp);
+
+fread(buf,1,10,fp);
+
+1 -> return value = 10  ->10 字节
+
+2 -> 5  -> 5  b
+
+fread(buf,10,1,fp);
+
+1 -> return value = 1 ->  10字节
+2 -> 0  ->  ???
+ // 因为一个对象有十个字节，现在只读了五个，不满足一个对象，所以返回值是 0
+
+
+×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
+×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
+×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
+
+fp = fopen();
+
+fputc(fp) * 10  文件位置指针已经向后偏移了10位，此时指向第 11 位
+
+fclose();    添加这个函数，关闭文件，使文件位置指针返回,但这样很死板，为了解决这个问题，采用fseek()  ftell() 函数
+fseek(fp,0,SEEK_SET);
+fseek(fp,-10,SEEK_CUR);
+
+fopen();
+
+fgetc()  * 10   它从第十一位开始读起，会读到未知内容
+文件位置指针
+
+
+
+int fseek(FILE *stream, long offset, int whence);
+    指定要操作的FILE流  偏移量       偏移的相对位置
+
+  If whence is set to SEEK_SET（首）, SEEK_CUR（当前）, or SEEK_END（尾）, the offset is relative to  the  start
+       of the file, the current position indicator, or end-of-file, respectively.
+long ftell(FILE *stream);
+
+
+临时文件:
+        1、如何不冲突
+        2、及时销毁
+tepnam函数    
+        #include<stdio.h>
+        char *tmpnam(char *s);
+
+
+×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
+×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
+×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
+
+
+
+getline()
+动态分配内存 malloc
+SYNOPSIS
+       #include <stdio.h>
+       ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+       ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream);
+       Feature Test Macro Requirements for glibc (see feature_test_macros(7)):
+       getline(), getdelim():
+           Since glibc 2.10:
+               _POSIX_C_SOURCE >= 200809L
+           Before glibc 2.10:
+               _GNU_SOURCE  宏定义
