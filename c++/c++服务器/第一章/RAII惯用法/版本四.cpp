@@ -1,22 +1,3 @@
-/**
- *  写一个c++程序，用该程序实现一个简单的服务，在客户端连接上来时，给客户端发一条“Hello World”消息后关闭连接，
- *  不用保证客户端一定能收到
- *  知识点：网络编程
- *  基本流程：
- *  （1）创建Socket套接字
- *  （2）绑定ip地址和端口
- *  （3）启动监听，循环等待客户端到来，在客户端连接成功后，给客户端发一条“Hello World”消息后关闭连接
- * 
- *   ------------------------
- * 
- *   if(操作不成功) {
- *       delete[] p;
- *       p = NULL;
- *       return ;
- *    }
- *    这种类型的操作可以概括为：“先分配资源，再进行相关操作，在任意中间步骤出错都对相应的资源进行回收”
- *    这样编写代码极其容易出错，需要在任意步骤都要考虑是否出错。
- **/
 #include<cstdio>
 #include <cstring>
 #include <cstdlib>
@@ -30,6 +11,38 @@
 #define BUFFSIZE 2048
 
 int sockfd, connfd;
+
+class ServerSocket {
+   public:
+    ServerSocket() {
+        sockfd = -1;
+        connfd = -1;
+    }
+    ~ServerSocket() {
+        if (1){
+            ;
+        }
+    }
+    bool DoInit() {
+        sockfd = socket(AF_INET, SOCK_STREAM, 0);
+        if (sockfd == -1) {
+            printf("Create socket error(%d):%s\n", errno, strerror(errno));
+            return false;
+        }
+        return true;
+    }
+    bool DoBind(const char* ip, short port = 6000) {
+        struct sockaddr_in servaddr; // 用于存放ip和端口的结构
+        bzero(&servaddr, sizeof(servaddr));
+        servaddr.sin_family = AF_INET;
+        servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+        servaddr.sin_port = htons(port);
+        if (bind(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) == -1) {
+            printf("Bind error(%d): %s\n", errno, strerror(errno));
+            return -1;
+        }
+    }
+};
 
 void stopServerRunning(int p)
 {
@@ -95,5 +108,3 @@ int main() {
     }
     return 0;
 }
-
-
