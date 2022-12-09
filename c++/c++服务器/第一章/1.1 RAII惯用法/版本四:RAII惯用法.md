@@ -8,6 +8,7 @@
 
     };
 ```
+## 例一
 RAII分配堆内存
 ```c++
     class HeapObjectWrapper {
@@ -28,7 +29,7 @@ RAII分配堆内存
             return;
     }
 ```
-其他情景：
+## 其他情景：
 对多线程锁的获取和释放
 
 
