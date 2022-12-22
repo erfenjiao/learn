@@ -23,14 +23,14 @@
 		exit(EXIT_FAILURE); \
 	}while(0)
 
-typedef std::vector<struct pollfd> PollFdList
+typedef std::vector<struct pollfd> PollFdList;
 
 int main() {
 	signal(SIGPIPE, SIG_IGN); // ?
 	signal(SIGCHLD, SIG_IGN); // ?
 	
 	int listenfd;
-	listenfd = socket(PF_INET, SOCK_STREAM | SOCK_NOBLOCK | SOCK_CLOEXEC, IPROTO_TCP);
+	listenfd = socket(PF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
 	/*
 	 * 编程模型: nonblocking socket + I/O 复用
 	 * SOCK_NOBLOCK : 非阻塞模式
@@ -41,6 +41,8 @@ int main() {
 	}
 	struct sockaddr_in servaddr;
 	memset(&servaddr, 0, sizeof(servaddr));
+	servaddr.sin_port = 6000;
+	servaddr.sin_addr.s_addr = 
 
 
 
