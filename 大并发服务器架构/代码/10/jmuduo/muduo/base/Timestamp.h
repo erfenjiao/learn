@@ -23,7 +23,7 @@ class Timestamp : public muduo::copyable,
   /// Constucts an invalid Timestamp.
   ///
   Timestamp()
-    : microSecondsSinceEpoch_(0)
+    : microSecondsSinceEpoch_(0)   //初始化为0
   {
   }
 
@@ -53,8 +53,8 @@ class Timestamp : public muduo::copyable,
   ///
   /// Get time of now.
   ///
-  static Timestamp now();
-  static Timestamp invalid();
+  static Timestamp now();     //获取当前时间
+  static Timestamp invalid(); //获取无效时间
 
   static const int kMicroSecondsPerSecond = 1000 * 1000;
 
@@ -81,8 +81,10 @@ inline bool operator==(Timestamp lhs, Timestamp rhs)
 /// resolution for next 100 years.
 inline double timeDifference(Timestamp high, Timestamp low)
 {
+  // diff 微秒 一微秒 = 百万分之一秒
   int64_t diff = high.microSecondsSinceEpoch() - low.microSecondsSinceEpoch();
   return static_cast<double>(diff) / Timestamp::kMicroSecondsPerSecond;
+  // / 100*100
 }
 
 ///

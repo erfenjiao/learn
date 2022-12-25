@@ -206,7 +206,7 @@ public:
 };
 int main() {
 	Foo foo;
-    //              void f(int)
+    //              void f(int)                                     Foo*      _:占位符
 	boost::function<void (int)> fp = boost::bind(&Foo::memberFunc, &foo, 0.5, _1, 10);
 	//把成员函数Foo::memberFunc适配成<void (int)>，使用boost::function来接收
     fp(100);
@@ -214,6 +214,26 @@ int main() {
 }
 
 ```
+
+
+
+rector模式实现的网络库
+
+
+
+# 编程风格区分
+
+c编程风格
+
+注册三个全局函数到网络库，网络库通过函数指针来回调
+
+面向对象编程风格
+
+用一个Echoserver继承TcpServer(抽象类)，实现三个接口
+
+基于对象风格
+
+用一个Echoserver
 
 
 

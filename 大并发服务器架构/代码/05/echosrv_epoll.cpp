@@ -138,7 +138,7 @@ int main(void)
 					std::cout<<"client close"<<std::endl;
 					close(connfd);
 					event = events[i];
-					// 删除
+					// 删除、 OOD-》改变
 					epoll_ctl(epollfd, EPOLL_CTL_DEL, connfd, &event);
 					clients.erase(std::remove(clients.begin(), clients.end(), connfd), clients.end());
 					continue;

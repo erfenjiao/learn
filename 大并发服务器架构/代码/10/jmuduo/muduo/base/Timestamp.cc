@@ -10,6 +10,7 @@
 
 using namespace muduo;
 
+//编译时断言
 BOOST_STATIC_ASSERT(sizeof(Timestamp) == sizeof(int64_t));
 
 Timestamp::Timestamp(int64_t microseconds)
@@ -29,9 +30,12 @@ string Timestamp::toString() const
 string Timestamp::toFormattedString() const
 {
   char buf[32] = {0};
+  //得到秒数
   time_t seconds = static_cast<time_t>(microSecondsSinceEpoch_ / kMicroSecondsPerSecond);
+  //得到微秒数
   int microseconds = static_cast<int>(microSecondsSinceEpoch_ % kMicroSecondsPerSecond);
   struct tm tm_time;
+  //_r：线程安全的函数
   gmtime_r(&seconds, &tm_time);
 
   snprintf(buf, sizeof(buf), "%4d%02d%02d %02d:%02d:%02d.%06d",

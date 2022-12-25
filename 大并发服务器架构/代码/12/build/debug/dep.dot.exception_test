@@ -1,0 +1,12 @@
+digraph "exception_test" {
+node [
+  fontsize = "12"
+];
+    "node2" [ label = "exception_test", shape = egg ];
+    "node3" [ label = "muduo_base", shape = octagon ];
+    "node2" -> "node3" [ style = dotted ] // exception_test -> muduo_base
+    "node4" [ label = "pthread", shape = septagon ];
+    "node3" -> "node4"  // muduo_base -> pthread
+    "node5" [ label = "rt", shape = septagon ];
+    "node3" -> "node5"  // muduo_base -> rt
+}
