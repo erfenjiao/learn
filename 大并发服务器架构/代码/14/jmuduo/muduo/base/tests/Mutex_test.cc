@@ -11,14 +11,14 @@
 using namespace muduo;
 using namespace std;
 
-MutexLock g_mutex;
-vector<int> g_vec;
+MutexLock g_mutex; // 锁
+vector<int> g_vec; // 向量
 const int kCount = 10*1000*1000;
 
 void threadFunc()
 {
-  for (int i = 0; i < kCount; ++i)
-  {
+  for (int i = 0; i < kCount; ++i)  
+  { 
     MutexLockGuard lock(g_mutex);
     g_vec.push_back(i);
   }
@@ -27,13 +27,13 @@ void threadFunc()
 int main()
 {
   const int kMaxThreads = 8;
-  g_vec.reserve(kMaxThreads * kCount);
+  g_vec.reserve(kMaxThreads * kCount); //预留 8000 0000 个整数.300 多M
 
-  Timestamp start(Timestamp::now());
-  for (int i = 0; i < kCount; ++i)
+  Timestamp start(Timestamp::now());  
+  for (int i = 0; i < kCount; ++i) // 1000 0000
   {
     g_vec.push_back(i);
-  }
+  } 
 
   printf("single thread without lock %f\n", timeDifference(Timestamp::now(), start));
 
@@ -41,10 +41,10 @@ int main()
   threadFunc();
   printf("single thread with lock %f\n", timeDifference(Timestamp::now(), start));
 
-  for (int nthreads = 1; nthreads < kMaxThreads; ++nthreads)
+  for (int nthreads = 1; nthreads < kMaxThreads; ++nthreads) // 8
   {
-    boost::ptr_vector<Thread> threads;
-    g_vec.clear();
+    boost::ptr_vector<Thread> threads; //存放 Thread 指针
+    g_vec.clear(); 
     start = Timestamp::now();
     for (int i = 0; i < nthreads; ++i)
     {

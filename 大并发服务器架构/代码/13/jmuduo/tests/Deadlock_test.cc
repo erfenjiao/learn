@@ -24,7 +24,7 @@ void* doit(void* arg)
 {
 	printf("pid = %d begin doit ...\n",static_cast<int>(getpid()));
 	pthread_mutex_lock(&mutex);
-	struct timespec ts = {2, 0};
+	struct timespec ts = {2, 0}; // 等待 2 秒钟
 	nanosleep(&ts, NULL);
 	pthread_mutex_unlock(&mutex);
 	printf("pid = %d end doit ...\n",static_cast<int>(getpid()));
@@ -39,7 +39,8 @@ int main(void)
 	pthread_create(&tid, NULL, doit, NULL);
 	struct timespec ts = {1, 0};
 	nanosleep(&ts, NULL);
-	if (fork() == 0)
+	if (fork() == 0) //拷贝父进程所有的内存，互斥量也被拷贝，子进程处于加锁的状态
+					 //这个锁不是子进程锁定的，结果又加了一个锁，就陷入了死锁状态。
 	{
 		doit(NULL);
 	}

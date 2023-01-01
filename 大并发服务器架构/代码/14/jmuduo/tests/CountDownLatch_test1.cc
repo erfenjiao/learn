@@ -15,7 +15,7 @@ class Test
     : latch_(1),
       threads_(numThreads)
   {
-    for (int i = 0; i < numThreads; ++i)
+    for (int i = 0; i < numThreads; ++i) //创建出三个线程
     {
       char name[32];
       snprintf(name, sizeof name, "work thread %d", i);
@@ -27,7 +27,7 @@ class Test
 
   void run()
   {
-    latch_.countDown();
+    latch_.countDown(); // 计数减1
   }
 
   void joinAll()

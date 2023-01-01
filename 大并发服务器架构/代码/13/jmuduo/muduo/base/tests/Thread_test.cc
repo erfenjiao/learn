@@ -7,7 +7,9 @@
 
 void threadFunc()
 {
+  // 获取当前线程的 tid
   printf("tid=%d\n", muduo::CurrentThread::tid());
+
 }
 
 void threadFunc2(int x)

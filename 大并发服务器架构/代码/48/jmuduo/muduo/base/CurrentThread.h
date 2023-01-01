@@ -18,10 +18,12 @@ namespace CurrentThread
 
   inline int tid()
   {
-    if (t_cachedTid == 0)
+    if (t_cachedTid == 0) //暂时没有缓存
     {
+      //  缓存 tid 
       cacheTid();
     }
+    // 缓存成功， 返回
     return t_cachedTid;
   }
 
@@ -35,7 +37,7 @@ namespace CurrentThread
     return t_threadName;
   }
 
-  bool isMainThread();
+  bool isMainThread(); //是否是主线程
 }
 }
 
