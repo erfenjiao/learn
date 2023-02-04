@@ -89,7 +89,7 @@ BOOST_STATIC_ASSERT(sizeof(Timestamp) == sizeof(int64_t));
 
 可跨平台
 
-![10.1](/home/erfenjiao/learn/大并发服务器架构/截图/P10/10.1.png)
+<img src="/home/erfenjiao/learn/大并发服务器架构/截图/P10/10.1.png" alt="10.1" style="zoom: 33%;" />
 
 
 
@@ -99,7 +99,7 @@ BOOST_STATIC_ASSERT(sizeof(Timestamp) == sizeof(int64_t));
 
 #define __STDC_FORMAT_MACROS
 
-![10.3](/home/erfenjiao/learn/大并发服务器架构/截图/P10/10.3.png)
+<img src="/home/erfenjiao/learn/大并发服务器架构/截图/P10/10.3.png" alt="10.3" style="zoom: 33%;" />
 
 
 
@@ -174,7 +174,7 @@ EnQueue(Q, data) //进队列
 
 # P12 Exception
 
-异常信息 ![12.1](/home/erfenjiao/learn/大并发服务器架构/截图/P10/12.1.png)
+异常信息 <img src="/home/erfenjiao/learn/大并发服务器架构/截图/P10/12.1.png" alt="12.1" style="zoom:50%;" />
 
 
 
@@ -235,7 +235,7 @@ DESCRIPTION
        如果回溯大于size，则对应于最近返回函数调用；要获得完整的回溯，请确保缓冲区和大小足够大。
 ```
 
-![12.2](/home/erfenjiao/learn/大并发服务器架构/截图/P10/12.2.png)
+<img src="/home/erfenjiao/learn/大并发服务器架构/截图/P10/12.2.png" alt="12.2" style="zoom:33%;" />
 
 数组malloc出来，需要手动释放（free）
 
@@ -261,7 +261,7 @@ Linux中，每个进程有一个pid，类型pid_t，由**getpid()**取得。Linu
 
 ​       typedef boost::function<void ()> ThreadFunc;
 
-![image-20221226132504861](/home/erfenjiao/learn/大并发服务器架构/截图/P10/13.2.png)
+<img src="/home/erfenjiao/learn/大并发服务器架构/截图/P10/13.2.png" alt="image-20221226132504861" style="zoom:50%;" />
 
 查看文件
 
